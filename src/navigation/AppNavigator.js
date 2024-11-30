@@ -1,6 +1,6 @@
+import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
 import { StatusBar, View, StyleSheet } from 'react-native';
-
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
@@ -8,6 +8,7 @@ import SplashScreen from '../screens/SplashScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
 import SignupScreen from '../screens/SignupScreen';
 import DashboardScreen from '../screens/DashboardScreen';
+import AdminDashboard from '../screens/AdminDashboard';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import Notifications from '../screens/Notifications';
@@ -38,15 +39,16 @@ function DrawerNavigator() {
       {/* Gradient Background */}
         {/* Drawer Navigator */}
         <Drawer.Navigator
-          drawerContent={(props) => <DrawerContent {...props} />}
+          drawerContent={(props) => <DrawerContent {...props}  />}
           screenOptions={{
             drawerStyle: {
               backgroundColor: 'transparent', // Transparent to show gradient
               width: 280,
             },
-            headerShown: false, // Disable headers for individual screens
+            headerShown: false, 
           }}
         >
+          <Drawer.Screen name="AdminDashboard" component={AdminDashboard} />
           <Drawer.Screen name="Dashboard" component={DashboardScreen} />
           <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
           <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
@@ -75,7 +77,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Notifications" component={Notifications} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Dashboard" component={DrawerNavigator} />
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+        <Stack.Screen name="AdminDashboard" component={DrawerNavigator} />
         {/* <Stack.Screen name="Dashboard" component={DashboardScreen} /> */}
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="EmployeeForm" component={EmployeeForm} />

@@ -77,7 +77,7 @@ export default function OnboardingScreen({ navigation }) {
                     {
                         backgroundColor: '#fff',
                         image: <Image source={require('../assets/Onboarding1.png')} />,
-                        title: 'Welcome to Connexo IT Group',
+                        title: 'Welcome to Medicef IT Group',
                         subtitle: 'Empowering your journey through cutting-edge IT education and expertise.',
                       //  titleStyles: { color: 'blue' } // set default color for the title
 
@@ -91,7 +91,7 @@ export default function OnboardingScreen({ navigation }) {
                     {
                         backgroundColor: '#ffffff',
                         image: <Image source={require('../assets/Onboarding2.png')} />,
-                        title: 'Dive into a seamless learning experience with Connexo IT Group',
+                        title: 'Dive into a seamless learning experience with Medicef IT Group',
                         subtitle: "Experience interactive learning with expert-led courses and progress tracking",
                     },
                 ]}

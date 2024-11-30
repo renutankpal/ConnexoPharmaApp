@@ -1,73 +1,202 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ImageBackground } from 'react-native';
 import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import * as Animatable from 'react-native-animatable';
-import logo from '../assets/logo.jpg';
+import vidhyagxp_logo from '../assets/vidhyagxp_logo.png';
+import medicef_logo from '../assets/medicef_logo.png';
+import loginBG from '../assets/loginBG.jpeg';
+import { Checkbox } from 'react-native-paper';
+import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [emailBorderColor, setEmailBorderColor] = useState('#ccc'); 
-    const [passwordBorderColor, setPasswordBorderColor] = useState('#ccc'); 
-    const navigation = useNavigation(); 
+    const [checked, setChecked] = useState(false);
+    const [emailBorderColor, setEmailBorderColor] = useState('#ccc');
+    const [passwordBorderColor, setPasswordBorderColor] = useState('#ccc');
+    const [borderColor, setBorderColor] = useState('#ccc');
+
+    const [roleBorderColor, setRoleBorderColor] = useState('');
+    const [open, setOpen] = useState(false); // For controlling dropdown
+    const [value, setValue] = useState(null); // Selected value
+    const [items, setItems] = useState([ // Dropdown items
+        { label: 'Admin', value: 'admin' },
+        { label: 'User', value: 'user' },
+        { label: 'Employee', value: 'employee' },
+    ]);
+
+    const navigation = useNavigation();
+    const handleFocus = () => setBorderColor('#1E90FF');
+    const handleBlur = () => setBorderColor(value ? '#1E90FF' : '#ccc');
 
     const handleEmailChange = (value) => {
         setEmail(value);
-        setEmailBorderColor(value ? '#1E90FF' : '#ccc'); 
+        setEmailBorderColor(value ? '#1E90FF' : '#ccc');
     };
 
     const handlePasswordChange = (value) => {
         setPassword(value);
-        setPasswordBorderColor(value ? '#1E90FF' : '#ccc'); 
+        setPasswordBorderColor(value ? '#1E90FF' : '#ccc');
     };
 
     return (
-        <View style={styles.container}>
-            <Animatable.Image
-                animation="zoomInUp"
-                duration={2000}
-                source={logo}
-                style={styles.logo}
-                resizeMode="contain"
-            />
-            <TextInput
-                style={[styles.input, { borderColor: emailBorderColor }]} // Dynamically change the border color
-                placeholder="Email"
-                value={email}
-                onChangeText={handleEmailChange}
-            />
-            <TextInput
-                style={[styles.input, { borderColor: passwordBorderColor }]} // Dynamically change the border color
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={handlePasswordChange}
-            />
-            <CustomButton
-                title="Login"
-                onPress={() => navigation.navigate('Dashboard')}
-                style={{ width: '100%' }} 
+        <ImageBackground source={loginBG} style={styles.background}>
 
-            />
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-                <Text style={styles.link}>Don't have an account? Sign up</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.container}>
+                <View style={styles.subcontainer}>
+                    <View style={{ flexDirection: 'row', alignItem: 'center', justifyContent: 'space-between' }}>
+                        <Animatable.Image
+                            animation="zoomInUp"
+                            duration={2000}
+                            source={medicef_logo}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
+                        <Animatable.Image
+                            animation="zoomInUp"
+                            duration={2000}
+                            source={vidhyagxp_logo}
+                            style={styles.logo2}
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <Text style={styles.welcomeTxt}>Welcome To Admin-Console</Text>
+                    <View style={[styles.inputContainer, { emailBorderColor }]}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email"
+                            placeholderTextColor="#666"
+                            value={email}
+                            onChangeText={handleEmailChange}
+                        // onFocus={handleFocus}
+                        //  onBlur={handleBlur}
+                        />
+                        <Icon name="email" size={24} color="#666" style={styles.icon} />
+                    </View>
+                    <View style={[styles.inputContainer, { passwordBorderColor }]}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Password"
+                            placeholderTextColor="#666"
+                            value={password}
+                            onChangeText={handlePasswordChange}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            secureTextEntry
+
+                        />
+                        <Icon name="lock" size={24} color="#666" style={styles.icon} />
+                    </View>
+                    <DropDownPicker
+                        open={open}
+                        value={value}
+                        items={items}
+                        setOpen={setOpen}
+                        setValue={setValue}
+                        setItems={setItems}
+                        placeholder="Select Role"
+                        style={styles.dropdown}
+                        dropDownContainerStyle={[styles.dropdownContainer]}
+                    />
+                    <View style={styles.checkboxContainer}>
+                        <Checkbox
+                            status={checked ? 'checked' : 'unchecked'}
+                            onPress={() => setChecked(!checked)}
+                            color="blue"
+                        />
+                        <Text style={styles.checkboxText}>Remember me</Text>
+                    </View>
+                    <CustomButton
+                        title="Login"
+                        onPress={() => {
+                            if (value === 'admin') {
+                                navigation.navigate('AdminDashboard', { role: value });
+                            } else if (value === 'user') {
+                                navigation.navigate('Dashboard', { role: value });
+                            } else {
+                                alert('Please select a valid role.');
+                            }
+                        }}
+                        style={{ width: '100%', marginVertical: 20 }}
+                    />
+                      </View>
+            </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', padding: 20 },
-    logo: { width: 200, height: 150, marginVertical: 20 },
-    input: { 
-        width: '100%', 
-        padding: 15, 
-        borderWidth: 1.5, 
-        borderRadius: 5, 
+    background: {
+        flex: 1,
+        resizeMode: 'cover',
+    },
+    container: { flex: 1, justifyContent: 'center', alignItem: 'center' },
+    subcontainer: { backgroundColor: '#ffffff', width: '95%', alignItem: 'center', padding: 10, justifyContent: 'center', alignSelf: 'center', borderRadius: 10 },
+    logo: { width: 150, height: 100, marginHorizontal: 5, marginVertical: 10 },
+    logo2: { width: 170, height: 100, marginHorizontal: 5, marginVertical: 10 },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+        width: '90%',
+        alignSelf: 'center',
+
+    },
+    icon: {
+        marginRight: 10,
+    },
+    input: {
+        flex: 1,
+        fontSize: 16,
+        color: '#000',
+    },
+    // input: {
+    //     width: '90%',
+    //     padding: 12,
+    //     alignSelf: 'center',
+    //     color:'#000000',
+    //     justifyContent:'center',
+    //     borderWidth: 1.5,
+    //     borderRadius: 5,
+    //     marginBottom: 20,
+    // },
+    dropdown: {
+        //  borderColor: '#ccc',
+        width: '90%',
+        alignSelf: 'center',
+        color: '#000000',
+        justifyContent: 'center',
+        borderWidth: 1.5,
+        borderRadius: 5,
         marginBottom: 10,
     },
-    button: { backgroundColor: '#1E90FF', padding: 15, width: '100%', borderRadius: 5 },
-    buttonText: { color: '#fff', fontWeight: 'bold' },
-    link: { marginTop: 15, color: '#1E90FF' },
+    dropdownContainer: {
+        // borderColor: '#ccc',
+        width: '90%',
+        justifyContent: 'center',
+        alignSelf: 'center',
+
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        margin: 10,
+    },
+    checkboxText: {
+        marginLeft: 8,
+        color: '#000',
+        fontSize: 16,
+    },
+    welcomeTxt: {
+        color: '#000000',
+        fontWeight: 'bold',
+        fontSize: 25,
+        textAlign: 'center',
+        marginVertical: 20,
+    },
 });

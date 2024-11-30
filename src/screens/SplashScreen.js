@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import logo from '../assets/logo.jpg';
+import medicef_logo from '../assets/medicef_logo.png';
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
@@ -17,7 +18,7 @@ export default function SplashScreen({ navigation }) {
       <Animatable.Image
         animation="zoomInUp"
         duration={5000}
-        source={logo}
+        source={medicef_logo}
         style={styles.logo}
         resizeMode="contain"
       />

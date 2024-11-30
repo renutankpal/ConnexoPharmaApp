@@ -56,7 +56,7 @@ const courses = [
   { id: '10', name: 'Course 7', image: require('../assets/Rectangle32.png') },
 ];
 
-export default function DashboardScreen({ navigation }) {
+export default function AdminDashboard({ navigation }) {
   const [searchText, setSearchText] = useState('');
   const [selectedTab, setSelectedTab] = useState(1);
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -71,7 +71,9 @@ export default function DashboardScreen({ navigation }) {
     {
       id: '1',
       name: 'John Doe',
-      department: 'IT',
+      email:'john@gmail.com',
+      role:'Initiator',
+      department: 'Calibration Lab',
       designation: 'Software Engineer',
       joiningDate: '2023-01-10',
       status: 'Active',
@@ -79,6 +81,8 @@ export default function DashboardScreen({ navigation }) {
     {
       id: '2',
       name: 'Jane Smith',
+      email:'john@gmail.com',
+      role:'HOD',
       department: 'HR',
       designation: 'HR Manager',
       joiningDate: '2022-03-15',
@@ -87,11 +91,33 @@ export default function DashboardScreen({ navigation }) {
     {
       id: '3',
       name: 'Mike Brown',
-      department: 'Finance',
+      email:'mike@gmail.com',
+      role:'QA',
+      department: 'Production',
       designation: 'Accountant',
       joiningDate: '2021-06-20',
       status: 'Inactive',
     },
+    {
+        id: '4',
+        name: 'Marry Brown',
+        email:'mary@gmail.com',
+        role:'Reviewer',
+        department: 'Engineering',
+        designation: 'Accountant',
+        joiningDate: '2021-06-20',
+        status: 'Inactive',
+      },
+      {
+        id: '5',
+        name: 'Mike Brown',
+        email:'john@gmail.com',
+        role:'Approvar',
+        department: 'Finance',
+        designation: 'Accountant',
+        joiningDate: '2021-06-20',
+        status: 'Inactive',
+      },
   ];
   
   const toggleForm = () => setIsFormVisible(!isFormVisible);
@@ -129,12 +155,12 @@ export default function DashboardScreen({ navigation }) {
   // };
 
   const renderItems = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={styles.cell}>{item.id}</Text>
+    <View style={[styles.row,{marginLeft:0}]}>
+      <Text style={styles.cellID}>{item.id}</Text>
       <Text style={styles.cell}>{item.name}</Text>
+      <Text style={styles.cell}>{item.email}</Text>
       <Text style={styles.cell}>{item.department}</Text>
-      <Text style={styles.cell}>{item.designation}</Text>
-      <Text style={styles.cell}>{item.joiningDate}</Text>
+      <Text style={styles.cell}>{item.role}</Text>
       <Text style={styles.cell}>{item.status}</Text>
     </View>
   );
@@ -186,9 +212,9 @@ export default function DashboardScreen({ navigation }) {
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <CommonHeader
-        title="Dashboard"
+        title="Admin Dashboard"
         showLangIcon={true}
-      //  onMenuPress={() => navigation.openDrawer()}
+        onMenuPress={() => navigation.openDrawer()}
         onRightPress={() => navigation.navigate('Notifications')}
       />
       <LinearGradient
@@ -205,12 +231,12 @@ export default function DashboardScreen({ navigation }) {
         <Icon name="search" size={20} color="#4c669f" style={styles.icon} />
         <TextInput
           style={styles.searchBar}
-          placeholder="Search courses"
+          placeholder="Search User"
           value={searchText}
           onChangeText={setSearchText}
         />
       </View>
-      <View>
+      {/* <View>
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -241,21 +267,19 @@ export default function DashboardScreen({ navigation }) {
             </TouchableOpacity>
           )}
         />
-      </View>
+      </View> */}
 
 
       {renderForm()}
-      {/* Course Grid */}
-      <View style={{ flexDirection: 'row', margin: 12, justifyContent: 'space-between' }}>
-        <Text style={styles.courseName}>LMS Dashboard</Text>
-        <Text style={styles.courseName}>See All Records</Text>
+      <View style={{ flexDirection: 'row', margin: 15, justifyContent: 'space-between' }}>
+        <Text style={styles.courseName}>Login Accounts</Text>
       </View>
       <View style={[styles.row, styles.headerRow]}>
-        <Text style={[styles.cell, styles.headerText]}>ID</Text>
+        <Text style={[styles.cellID, styles.headerText]}>ID</Text>
         <Text style={[styles.cell, styles.headerText]}>Name</Text>
+        <Text style={[styles.cell, styles.headerText]}>Email</Text>
         <Text style={[styles.cell, styles.headerText]}>Department</Text>
-        <Text style={[styles.cell, styles.headerText]}>Designation</Text>
-        <Text style={[styles.cell, styles.headerText]}>Joining Date</Text>
+        <Text style={[styles.cell, styles.headerText]}>Role</Text>
         <Text style={[styles.cell, styles.headerText]}>Status</Text>
       </View>
       <FlatList
@@ -412,9 +436,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     borderBottomWidth: 1,
+    textAlign: 'center',
     borderBottomColor: '#ddd',
   },
   cell: {
+    flex: 2,
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#333',
+  },
+  cellID:{
     flex: 1,
     textAlign: 'center',
     fontSize: 14,

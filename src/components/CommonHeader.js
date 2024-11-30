@@ -6,11 +6,11 @@ import LinearGradient from 'react-native-linear-gradient';
 const CommonHeader = ({
   title,
   onMenuPress,
-  onBackPress, // Handler for back button
+  onBackPress, 
   onRightPress,
-  onLanguagePress, // Handler for language selection
-  showBackIcon = false, // Conditional prop
-  showLangIcon = false, // Conditional prop
+  onLanguagePress, 
+  showBackIcon = false, 
+  showLangIcon = false,
   rightIconName = 'notifications-outline',
 }) => {
   return (

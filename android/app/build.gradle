@@ -133,7 +133,7 @@ project.ext.vectoricons = [
 ]
 
 project.ext.react = [
-    enableHermes: true,  // Set this to true
+    enableHermes: false,  // Set this to true
 ]
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
