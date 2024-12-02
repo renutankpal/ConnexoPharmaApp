@@ -10,17 +10,17 @@ export function DrawerContent(props) {
   const [activeItem, setActiveItem] = useState('');
   const [searchText, setSearchText] = useState('');
 
-  const role = props.role || 'user'; 
+  const role = props.role; 
 
   const adminMenuItems = [
     { label: 'Admin Home', icon: 'home-outline', screen: 'AdminDashboard' },
     { label: 'Profile', icon: 'person-outline', screen: 'ProfileScreen' },
     { label: 'Notifications', icon: 'notifications-outline', screen: 'Notifications' },
-    { label: 'Manage Employees', icon: 'account-multiple-outline', screen: 'EmployeeManagement' },
+    { label: 'Manage Employees', icon: 'account-multiple-outline', screen: 'EmployeeForm' },
   ];
 
   const employeeMenuItems = [
-    { label: 'Home', icon: 'home-outline', screen: 'Dashboard' },
+    { label: 'Home', icon: 'home-outline', screen: 'DashboardScreen' },
     { label: 'User Management', icon: 'person-outline', screen: 'ProfileScreen' },
     { label: 'User Monitoring', icon: 'notifications-outline', screen: 'Notifications' },
     { label: 'Dividion & Process', icon: 'document-text-outline', screen: 'EmployeeForm' },
@@ -40,7 +40,7 @@ export function DrawerContent(props) {
             <Text style={styles.userName}>Welcome, User</Text>
           </View> */}
 <View style={styles.drawerHeader}>
-    {role == 'admin' ? (
+    {role === 'admin' ? (
       <>
         <Image source={UserProfile} style={styles.profileImage} />
         </>
@@ -52,77 +52,30 @@ export function DrawerContent(props) {
     )}
   </View>
 
-  {role == 'admin' ? (
-    <View style={styles.searchContainer}>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search items"
-        placeholderTextColor="#666"
-        onChangeText={(text) => setSearchText(text)}
-        value={searchText}
-      />
-      <Icon name="magnify" size={20} color="#666" style={styles.searchIcon} />
-    </View>
-  ):(
-    <>
-    </>
-  )}
           {/* Custom Drawer Items */}
-          {/* {menuItems
-    .filter((item) =>
-      role === 'admin'
-        ? item.label.toLowerCase().includes(searchText.toLowerCase())
-        : true
-    )
-    .map((item, index) => (
-      <TouchableOpacity
-        key={index}
-        style={[
-          styles.drawerItem,
-          activeItem === item.screen && styles.activeDrawerItem,
-        ]}
-        onPress={() => {
-          setActiveItem(item.screen);
-          props.navigation.navigate(item.screen);
-        }}
-      >
-        <Icon
-          name={item.icon}
-          size={22}
-          color={activeItem === item.screen ? '#fff' : '#333'}
-        />
-        <Text
-          style={[
-            styles.drawerItemLabel,
-            activeItem === item.screen && styles.activeDrawerItemLabel,
-          ]}
-        >
-          {item.label}
-        </Text>
-      </TouchableOpacity>
-    ))} */}
           {menuItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.drawerItem,
-                activeItem === item.screen && styles.activeDrawerItem,
-              ]}
-              onPress={() => {
-                setActiveItem(item.screen);
-                props.navigation.navigate(item.screen);
-              }}
-            >
-              <Icon name={item.icon} size={22} color={activeItem === item.screen ? '#fff' : '#333'} />
-              <Text
-                style={[
-                  styles.drawerItemLabel,
-                  activeItem === item.screen && styles.activeDrawerItemLabel,
-                ]}
-              >
-                {item.label}
-              </Text>
-            </TouchableOpacity>
+           <TouchableOpacity
+           key={index}
+           style={[
+             styles.drawerItem,
+             activeItem === item.screen && styles.activeDrawerItem,
+           ]}
+           onPress={() => {
+             setActiveItem(item.screen);
+             props.navigation.navigate(item.screen); // Navigate using the drawer's navigation
+           }}
+         >
+           <Icon name={item.icon} size={22} color={activeItem === item.screen ? '#fff' : '#333'} />
+           <Text
+             style={[
+               styles.drawerItemLabel,
+               activeItem === item.screen && styles.activeDrawerItemLabel,
+             ]}
+           >
+             {item.label}
+           </Text>
+         </TouchableOpacity>
+         
           ))}
         </DrawerContentScrollView>
 
@@ -130,8 +83,10 @@ export function DrawerContent(props) {
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={() => {
-            setActiveItem('');
-            props.navigation.navigate('Login');
+            props.navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
           }}
         >
           <Text style={styles.logoutText}>Logout</Text>

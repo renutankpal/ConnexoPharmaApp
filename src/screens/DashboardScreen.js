@@ -182,13 +182,19 @@ export default function DashboardScreen({ navigation }) {
         return null;
     }
   };
-
+  const handleMenuPress = () => {
+    if (navigation.openDrawer) {
+      navigation.openDrawer();
+    } else {
+      console.error("Drawer navigation is unavailable.");
+    }
+  };
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <CommonHeader
         title="Dashboard"
         showLangIcon={true}
-      //  onMenuPress={() => navigation.openDrawer()}
+        onMenuPress={() => navigation.openDrawer()} 
         onRightPress={() => navigation.navigate('Notifications')}
       />
       <LinearGradient

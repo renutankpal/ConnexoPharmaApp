@@ -19,51 +19,39 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
-// Authentication stack
-function AuthStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="Login"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-    </Stack.Navigator>
-  );
-}
 
 // Drawer navigator with additional screens
-function DrawerNavigator() {
+function DrawerNavigator({ route, navigation }) {
+  const role = route?.params?.role;
+
   return (
     <View style={{ flex: 1 }}>
-      {/* Gradient Background */}
-        {/* Drawer Navigator */}
-        <Drawer.Navigator
-          drawerContent={(props) => <DrawerContent {...props}  />}
-          screenOptions={{
-            drawerStyle: {
-              backgroundColor: 'transparent', // Transparent to show gradient
-              width: 280,
-            },
-            headerShown: false, 
-          }}
-        >
+      <Drawer.Navigator
+        drawerContent={(props) => <DrawerContent {...props} role={role} />}
+        initialRouteName={role === 'admin' ? 'AdminDashboard' : 'DashboardScreen'}
+        screenOptions={{ headerShown: false }}
+      >
+        {role === 'admin' ? (
           <Drawer.Screen name="AdminDashboard" component={AdminDashboard} />
+        ) : (
           <Drawer.Screen name="Dashboard" component={DashboardScreen} />
-          <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
-          <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
-          <Drawer.Screen name="Notifications" component={Notifications} />
-        </Drawer.Navigator>
+        )}
+        <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Drawer.Screen name="Notifications" component={Notifications} />
+        <Drawer.Screen name="EmployeeForm" component={EmployeeForm} />
+      </Drawer.Navigator>
     </View>
   );
 }
-export default function AppNavigator() {
+
+export default function AppNavigator({route}) {
+  const role = route?.params?.role || 'admin';
 
   return (
     <NavigationContainer>
       <View style={styles.statusBarContainer}>
         <LinearGradient
-          colors={['#4274DA', '#00BFFF']}
+          colors={['#ba6715', '#f8b195']}
           style={styles.statusBarGradient}
         />
         <StatusBar backgroundColor="transparent" translucent barStyle="light-content" />
@@ -79,14 +67,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen name="AdminDashboard" component={DrawerNavigator} />
-        {/* <Stack.Screen name="Dashboard" component={DashboardScreen} /> */}
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="EmployeeForm" component={EmployeeForm} />
-        {/* Auth stack */}
-        {/* <Stack.Screen name="Auth" component={AuthStack} /> */}
-        {/* Main drawer navigator */}
-        {/* <Stack.Screen name="Main" component={DrawerNavigator} /> */}
-
 
       </Stack.Navigator>
     </NavigationContainer>
@@ -103,7 +85,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
   },
   statusBarGradient: {
     flex: 1,

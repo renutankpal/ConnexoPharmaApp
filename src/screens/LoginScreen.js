@@ -19,9 +19,9 @@ export default function LoginScreen() {
     const [borderColor, setBorderColor] = useState('#ccc');
 
     const [roleBorderColor, setRoleBorderColor] = useState('');
-    const [open, setOpen] = useState(false); // For controlling dropdown
-    const [value, setValue] = useState(null); // Selected value
-    const [items, setItems] = useState([ // Dropdown items
+    const [open, setOpen] = useState(false); 
+    const [value, setValue] = useState(null); 
+    const [items, setItems] = useState([ 
         { label: 'Admin', value: 'admin' },
         { label: 'User', value: 'user' },
         { label: 'Employee', value: 'employee' },

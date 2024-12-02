@@ -1,38 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground, Linking } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
-import { Button } from 'react-native-paper';
-import CustomButton from '../components/CustomButton';
 import LinearGradient from 'react-native-linear-gradient';
+import * as Animatable from 'react-native-animatable';
+import vidhyagxp_logo from '../assets/vidhyagxp_logo.png';
 
 export default function OnboardingScreen({ navigation }) {
+    const [showOnboarding, setShowOnboarding] = useState(false); 
+    const onboardingRef = useRef(null);
 
-    const Square = ({ isLight, isgradient, selected }) => {
-        let backgroundColor;
-        if (isLight) {
-            backgroundColor = selected ? '#4274DA' : 'rgba(0, 0, 0, 0.3)';
-        } else {
-            backgroundColor = selected ? '#fff' : 'rgba(255, 255, 255, 0.5)';
-        }
-        return (
-            <View
-                style={{
-                    width: 8,
-                    height: 8,
-                    marginHorizontal: 3,
-                    backgroundColor,
-                }}
-            />
-        );
-    };
+    const colors = ['#ba6715', '#f8b195'];
 
-    const backgroundColor = isLight => (isLight ? '#4274DA' : 'lightblue');
-    const color = isgradient => ['#4274DA', '#00BFFF'];
-    const colors = ['#4274DA', '#00BFFF'];
-    const Done = ({ isLight, ...props }) => (
+    // Done button component
+    const Done = () => (
         <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => Linking.openURL('https://medicef.mydemosoftware.com/')}
         >
             <LinearGradient colors={colors} style={styles.gradientButton}>
                 <Text style={styles.buttonText}>Done</Text>
@@ -40,10 +23,11 @@ export default function OnboardingScreen({ navigation }) {
         </TouchableOpacity>
     );
 
-    const Skip = ({ isLight, isgradient, skipLabel, ...props }) => (
+    // Skip button component
+    const Skip = () => (
         <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => Linking.openURL('https://medicef.mydemosoftware.com/')}
         >
             <LinearGradient colors={colors} style={styles.gradientButton}>
                 <Text style={styles.buttonText}>Skip</Text>
@@ -51,11 +35,11 @@ export default function OnboardingScreen({ navigation }) {
         </TouchableOpacity>
     );
 
-    const Next = ({ isLight, colors = ['#4274DA', '#00BFFF'], navigation, ...props }) => (
+    // Next button component
+    const Next = () => (
         <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => navigation.navigate('Login')}
-            {...props}
+            onPress={() => onboardingRef.current?.goToPage(1)} // Automatically move to the next page
         >
             <LinearGradient colors={colors} style={styles.gradientButton}>
                 <Text style={styles.buttonText}>Next</Text>
@@ -63,60 +47,148 @@ export default function OnboardingScreen({ navigation }) {
         </TouchableOpacity>
     );
 
+    // Effect for auto-scrolling the onboarding screens
+    useEffect(() => {
+        let currentPage = 0;
+        const timer = setInterval(() => {
+            if (currentPage < 2) {
+                onboardingRef.current?.goToPage(currentPage + 1);
+                currentPage += 1;
+            } else {
+                clearInterval(timer);
+            }
+        }, 3000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // Function to show the onboarding screen after "Get Started" button is pressed
+    const handleGetStarted = () => {
+        setShowOnboarding(true);
+    };
+
     return (
         <View style={styles.container}>
+            {!showOnboarding ? (
+                <ImageBackground
+                    source={require('../assets/loginBG.jpeg')}
+                    style={styles.imageBackground} 
+                   // resizeMode="cover" 
+                >
 
-            <Onboarding
-                DotComponent={Square}
-                NextButtonComponent={Next}
-                SkipButtonComponent={Skip}
-                DoneButtonComponent={Done}
-                // onPress={() => navigation.navigate('Login')}
+                    <View style={styles.welcomeContainer}>
+                    <Animatable.Image
+                            animation="zoomInUp"
+                            duration={2000}
+                            source={vidhyagxp_logo}
+                            style={styles.logo2}
+                            resizeMode="contain"
+                        />
+                    <Text style={styles.welcomeTitle}>Welcome to VidhyaGxp</Text>
+                    <Text style={styles.welcomeSubtitle1}>Data informs, wisdom discerns</Text>
 
-                pages={[
-                    {
-                        backgroundColor: '#fff',
-                        image: <Image source={require('../assets/Onboarding1.png')} />,
-                        title: 'Welcome to Medicef IT Group',
-                        subtitle: 'Empowering your journey through cutting-edge IT education and expertise.',
-                      //  titleStyles: { color: 'blue' } // set default color for the title
-
-                    },
-                    {
-                        backgroundColor: '#ffffff',
-                        image: <Image source={require('../assets/Onboarding4.png')} />,
-                        title: 'Begin your learning journey and unlock a world of knowledge',
-                        subtitle: 'Explore our comprehensive courses designed to transform your skills and career.',
-                    },
-                    {
-                        backgroundColor: '#ffffff',
-                        image: <Image source={require('../assets/Onboarding2.png')} />,
-                        title: 'Dive into a seamless learning experience with Medicef IT Group',
-                        subtitle: "Experience interactive learning with expert-led courses and progress tracking",
-                    },
-                ]}
-            />
-
+                    <Text style={styles.welcomeSubtitle}>
+                            Empowering your journey through cutting-edge IT education and expertise.
+                        </Text>
+                        
+                        <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
+                            <LinearGradient colors={colors} style={styles.gradientButton}>
+                                <Text style={styles.buttonText}>Get Started</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
+            ) : (
+                // Onboarding Screens
+                <Onboarding
+                    ref={onboardingRef}
+                    DotComponent={({ isLight, selected }) => {
+                        let backgroundColor = selected ? '#ba6715' : 'rgba(0, 0, 0, 0.3)';
+                        return (
+                            <View
+                                style={{
+                                    width: 8,
+                                    height: 8,
+                                    marginHorizontal: 3,
+                                    backgroundColor,
+                                }}
+                            />
+                        );
+                    }}
+                    NextButtonComponent={Next}
+                    SkipButtonComponent={Skip}
+                    DoneButtonComponent={Done}
+                    pages={[
+                        {
+                            backgroundColor: '#fff',
+                            image: <Image source={require('../assets/onboard2.jpg')} />,
+                            title: 'Welcome to VidhyaGxp IT Group',
+                            subtitle: 'Empowering your journey through cutting-edge IT education and expertise.',
+                        },
+                        {
+                            backgroundColor: '#ffffff',
+                            image: <Image source={require('../assets/onboard1.png')} />,
+                            title: 'Begin your learning journey and unlock a world of knowledge',
+                            subtitle: 'Explore our comprehensive courses designed to transform your skills and career.',
+                        },
+                        {
+                            backgroundColor: '#ffffff',
+                            image: <Image source={require('../assets/onboards.png')} style={{width:300,height:300}}  />,
+                            title: 'Dive into a seamless learning experience with VidhyaGxp IT Group',
+                            subtitle: "Experience interactive learning with expert-led courses and progress tracking",
+                        },
+                    ]}
+                />
+            )}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', },
-    slide: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 0 },
-    image: { width: 200, height: 200, marginBottom: 0 },
-    title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center' },
-    description: { fontSize: 15, textAlign: 'center', marginTop: 10 },
-    button: { backgroundColor: '#1E90FF', padding: 10, borderRadius: 8, position: 'absolute', bottom: 50, width: '80%', alignSelf: 'center' },
-    buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold', },
+    container: { flex: 1, backgroundColor: '#fff' },
+    imageBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logo2: { width: 200, height: 150, marginHorizontal: 5, marginVertical: 1 },
+
+    welcomeContainer: {
+      //  flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    welcomeTitle: {
+        fontSize: 30,
+        color:'#ba6715',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    welcomeSubtitle1: {
+        fontSize: 16,
+        color:'#000000',
+        textAlign: 'center',
+        marginBottom: 10,
+    },
+    welcomeSubtitle: {
+        fontSize: 16,
+        color:'#ba6715',
+        textAlign: 'center',
+        marginBottom: 10,
+    },
+    getStartedButton: {
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginHorizontal: 5,
+    },
     buttonContainer: {
         borderRadius: 10,
-        overflow: 'hidden', // Ensures the gradient doesn't spill out of the button's radius
+        overflow: 'hidden', 
         marginHorizontal: 5,
     },
     gradientButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
+        paddingHorizontal: 30,
+        paddingVertical: 12,
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',

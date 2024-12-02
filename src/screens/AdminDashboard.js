@@ -16,9 +16,11 @@ import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomButton from '../components/CustomButton';
 import EmployeeForm from '../components/EmployeeForm';
 import { KeyboardAvoidingView } from 'react-native';
+import { DataTable } from 'react-native-paper';
 
 const { width } = Dimensions.get('window');
-const slideAnim = new Animated.Value(300); 
+const slideAnim = new Animated.Value(300);
+
 const DashBoardtabs = [
   {
     id: 1,
@@ -63,6 +65,9 @@ export default function AdminDashboard({ navigation }) {
   const [selectedCat, setSelectedCat] = useState(1);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [selectedForm, setSelectedForm] = useState(null);
+  const [page, setPage] = useState(0);
+
+  const rowsPerPage = 5;
 
   const filteredCourses = courses.filter(course =>
     course.name.toLowerCase().includes(searchText.toLowerCase())
@@ -71,8 +76,8 @@ export default function AdminDashboard({ navigation }) {
     {
       id: '1',
       name: 'John Doe',
-      email:'john@gmail.com',
-      role:'Initiator',
+      email: 'john@gmail.com',
+      role: 'Initiator',
       department: 'Calibration Lab',
       designation: 'Software Engineer',
       joiningDate: '2023-01-10',
@@ -81,8 +86,8 @@ export default function AdminDashboard({ navigation }) {
     {
       id: '2',
       name: 'Jane Smith',
-      email:'john@gmail.com',
-      role:'HOD',
+      email: 'john@gmail.com',
+      role: 'HOD',
       department: 'HR',
       designation: 'HR Manager',
       joiningDate: '2022-03-15',
@@ -91,35 +96,76 @@ export default function AdminDashboard({ navigation }) {
     {
       id: '3',
       name: 'Mike Brown',
-      email:'mike@gmail.com',
-      role:'QA',
+      email: 'mike@gmail.com',
+      role: 'QA',
       department: 'Production',
       designation: 'Accountant',
       joiningDate: '2021-06-20',
       status: 'Inactive',
     },
     {
-        id: '4',
-        name: 'Marry Brown',
-        email:'mary@gmail.com',
-        role:'Reviewer',
-        department: 'Engineering',
-        designation: 'Accountant',
-        joiningDate: '2021-06-20',
-        status: 'Inactive',
-      },
-      {
-        id: '5',
-        name: 'Mike Brown',
-        email:'john@gmail.com',
-        role:'Approvar',
-        department: 'Finance',
-        designation: 'Accountant',
-        joiningDate: '2021-06-20',
-        status: 'Inactive',
-      },
+      id: '4',
+      name: 'Marry Brown',
+      email: 'mary@gmail.com',
+      role: 'Reviewer',
+      department: 'Engineering',
+      designation: 'Accountant',
+      joiningDate: '2021-06-20',
+      status: 'Inactive',
+    },
+    {
+      id: '5',
+      name: 'Mike Brown',
+      email: 'john@gmail.com',
+      role: 'Approvar',
+      department: 'Finance',
+      designation: 'Accountant',
+      joiningDate: '2021-06-20',
+      status: 'Inactive',
+    },
+    {
+      id: '6',
+      name: 'Mike Brown',
+      email: 'john@gmail.com',
+      role: 'Approvar',
+      department: 'Finance',
+      designation: 'Accountant',
+      joiningDate: '2021-06-20',
+      status: 'Inactive',
+    },
+    {
+      id: '7',
+      name: 'Mike Brown',
+      email: 'john@gmail.com',
+      role: 'Approvar',
+      department: 'Finance',
+      designation: 'Accountant',
+      joiningDate: '2021-06-20',
+      status: 'Inactive',
+    },
+    {
+      id: '8',
+      name: 'Mike Brown',
+      email: 'john@gmail.com',
+      role: 'Approvar',
+      department: 'Finance',
+      designation: 'Accountant',
+      joiningDate: '2021-06-20',
+      status: 'Inactive',
+    },
+    {
+      id: '9',
+      name: 'Mike Brown',
+      email: 'john@gmail.com',
+      role: 'Approvar',
+      department: 'Finance',
+      designation: 'Accountant',
+      joiningDate: '2021-06-20',
+      status: 'Inactive',
+    },
+
   ];
-  
+
   const toggleForm = () => setIsFormVisible(!isFormVisible);
   const toggleMenu = () => setIsMenuVisible(!isMenuVisible);
   const handleOpenMenu = () => {
@@ -155,7 +201,7 @@ export default function AdminDashboard({ navigation }) {
   // };
 
   const renderItems = ({ item }) => (
-    <View style={[styles.row,{marginLeft:0}]}>
+    <View style={[styles.row, { marginLeft: 0 }]}>
       <Text style={styles.cellID}>{item.id}</Text>
       <Text style={styles.cell}>{item.name}</Text>
       <Text style={styles.cell}>{item.email}</Text>
@@ -176,7 +222,7 @@ export default function AdminDashboard({ navigation }) {
       case 'Employee':
         navigation.navigate('EmployeeForm');
         break;
-     
+
       case 'Training Module':
         return (
           <View style={styles.formContainer}>
@@ -274,33 +320,67 @@ export default function AdminDashboard({ navigation }) {
       <View style={{ flexDirection: 'row', margin: 15, justifyContent: 'space-between' }}>
         <Text style={styles.courseName}>Login Accounts</Text>
       </View>
-      <View style={[styles.row, styles.headerRow]}>
+      <DataTable>
+        {/* Table Header */}
+        <DataTable.Header style={styles.headerRow}>
+          <DataTable.Title
+            textStyle={{ color: '#fff', fontWeight: 'bold' }}
+          //  sortDirection={'ascending' || 'descending'}
+
+          >ID</DataTable.Title>
+          <DataTable.Title textStyle={{ color: '#fff', fontWeight: 'bold' }}
+            style={styles.cell}>Name</DataTable.Title>
+          <DataTable.Title textStyle={{ color: '#fff', fontWeight: 'bold' }}
+            style={styles.cell}>Email</DataTable.Title>
+          <DataTable.Title textStyle={{ color: '#fff', fontWeight: 'bold' }}
+            style={styles.cell}>Department</DataTable.Title>
+          <DataTable.Title textStyle={{ color: '#fff', fontWeight: 'bold' }}
+            style={styles.cell}>Role</DataTable.Title>
+          <DataTable.Title textStyle={{ color: '#fff', fontWeight: 'bold' }}
+            style={styles.cell}>Status</DataTable.Title>
+        </DataTable.Header>
+
+        {/* Table Rows */}
+        {employees
+          .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+          .map((item, index) => (
+            <DataTable.Row key={index}>
+              <DataTable.Cell style={styles.cellID}>{item.id}</DataTable.Cell>
+              <DataTable.Cell style={styles.cell}>{item.name}</DataTable.Cell>
+              <DataTable.Cell style={styles.cell}>{item.email}</DataTable.Cell>
+              <DataTable.Cell style={styles.cell}>{item.department}</DataTable.Cell>
+              <DataTable.Cell style={styles.cell}>{item.role}</DataTable.Cell>
+              <DataTable.Cell style={styles.cell}>{item.status}</DataTable.Cell>
+            </DataTable.Row>
+          ))}
+
+        {/* Pagination */}
+        <DataTable.Pagination
+          page={page}
+          numberOfPages={Math.ceil(employees.length / rowsPerPage)}
+          onPageChange={(newPage) => setPage(newPage)}
+          label={`${page * rowsPerPage + 1}-${Math.min(
+            (page + 1) * rowsPerPage,
+            employees.length
+          )} of ${employees.length}`}
+        />
+      </DataTable>
+      {/* <View style={[styles.row, styles.headerRow]}>
         <Text style={[styles.cellID, styles.headerText]}>ID</Text>
         <Text style={[styles.cell, styles.headerText]}>Name</Text>
         <Text style={[styles.cell, styles.headerText]}>Email</Text>
         <Text style={[styles.cell, styles.headerText]}>Department</Text>
         <Text style={[styles.cell, styles.headerText]}>Role</Text>
         <Text style={[styles.cell, styles.headerText]}>Status</Text>
-      </View>
-      <FlatList
+      </View> */}
+      {/* <FlatList
         data={employees}
         keyExtractor={(item) => item.id}
       //  numColumns={2}
         renderItem={renderItems}
-        // renderItem={({ item }) => (
-        //   <View style={styles.card}>
-        //     {typeof item.image === 'string' ? (
-        //       <Image source={{ uri: item.image }} style={styles.courseImage} />
-        //     ) : (
-        //       <Image source={item.image} style={styles.courseImage} />
-        //     )}
-        //     <Text style={styles.courseName}>{item.name}</Text>
-        //     <Text style={styles.courseSubTitle}>{item.name}</Text>
-        //     <Text style={styles.courseSubTitle}>{item.name}</Text>
-        //   </View>
-        // )}
+       
         style={styles.grid}
-      />
+      /> */}
 
       {isMenuVisible && (
         <Modal transparent={true} visible={isMenuVisible} animationType="none">
@@ -427,6 +507,7 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     backgroundColor: '#4274DA',
+    color: '#fff'
   },
   headerText: {
     fontWeight: 'bold',
@@ -443,13 +524,14 @@ const styles = StyleSheet.create({
     flex: 2,
     textAlign: 'center',
     fontSize: 14,
-    color: '#333',
+    color: '#fff',
   },
-  cellID:{
+
+  cellID: {
     flex: 1,
     textAlign: 'center',
     fontSize: 14,
-    color: '#333',
+    color: '#ffffff',
   },
   card: {
     flex: 1,
@@ -555,8 +637,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   //floatingButton: { width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 20, right: 20 },
-    menuText:{fontSize:15,color:'#000000',fontWeight:'700',margin:5},
-  menuOption: { alignItems:'center', padding: 10, margin: 10, borderRadius: 8, flexDirection: 'row', backgroundColor: '#f5f5f5', fontSize: 16, elevation: 5, },
+  menuText: { fontSize: 15, color: '#000000', fontWeight: '700', margin: 5 },
+  menuOption: { alignItems: 'center', padding: 10, margin: 10, borderRadius: 8, flexDirection: 'row', backgroundColor: '#f5f5f5', fontSize: 16, elevation: 5, },
   formContainer: { marginTop: 20, padding: 20, borderRadius: 8, },
   formTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
   formInput: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 10, marginBottom: 10 },

@@ -6,10 +6,10 @@ import LinearGradient from 'react-native-linear-gradient';
 const CommonHeader = ({
   title,
   onMenuPress,
-  onBackPress, 
+  onBackPress,
   onRightPress,
-  onLanguagePress, 
-  showBackIcon = false, 
+  onLanguagePress,
+  showBackIcon = false,
   showLangIcon = false,
   rightIconName = 'notifications-outline',
 }) => {
@@ -21,14 +21,13 @@ const CommonHeader = ({
       >
         <StatusBar
           translucent
-          backgroundColor="transparent" // Transparent background for status bar
-          barStyle="light-content" // White text/icons for dark backgrounds
+          backgroundColor="transparent"
+          barStyle="light-content"
         />
       </LinearGradient>
 
-      {/* Header Content */}
       <LinearGradient
-        colors={['#4274DA', '#00BFFF']} // Gradient colors
+        colors={['#4274DA', '#00BFFF']}
         style={styles.headerContent}
       >
         {showBackIcon ? (
@@ -36,25 +35,22 @@ const CommonHeader = ({
             <Icon name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => onMenuPress && onMenuPress()}>
+          <TouchableOpacity onPress={onMenuPress}>
             <Icon name="menu" size={24} color="#fff" />
           </TouchableOpacity>
         )}
         <Text style={styles.title}>{title}</Text>
 
-        {/* Right Actions */}
         <View style={styles.rightActions}>
-        {showLangIcon ? (
-
-          <TouchableOpacity onPress={onRightPress}>
-            <Icon name={rightIconName} size={24} color="#fff" />
-          </TouchableOpacity>
-        ):(
-          <TouchableOpacity onPress={onLanguagePress} style={styles.languageButton}>
-            <Icon name="language" size={24} color="#fff" />
-          </TouchableOpacity>
-        )
-      }
+          {showLangIcon ? (
+            <TouchableOpacity onPress={onRightPress}>
+              <Icon name={rightIconName} size={24} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={onLanguagePress} style={styles.languageButton}>
+              <Icon name="language" size={24} color="#fff" />
+            </TouchableOpacity>
+          )}
         </View>
       </LinearGradient>
     </View>
