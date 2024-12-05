@@ -10,7 +10,7 @@ export function DrawerContent(props) {
   const [activeItem, setActiveItem] = useState('');
   const [searchText, setSearchText] = useState('');
 
-  const role = props.role; 
+  const role = props.role;
 
   const adminMenuItems = [
     { label: 'Admin Home', icon: 'home-outline', screen: 'AdminDashboard' },
@@ -26,6 +26,10 @@ export function DrawerContent(props) {
     { label: 'Dividion & Process', icon: 'document-text-outline', screen: 'EmployeeForm' },
   ];
   const menuItems = role === 'admin' ? adminMenuItems : employeeMenuItems;
+  const navigateToScreen = (screen) => {
+    setActiveItem(screen);
+    props.navigation.navigate(screen);
+  };
 
 
   return (
@@ -39,43 +43,39 @@ export function DrawerContent(props) {
             <Image source={UserProfile} style={styles.profileImage} />
             <Text style={styles.userName}>Welcome, User</Text>
           </View> */}
-<View style={styles.drawerHeader}>
-    {role === 'admin' ? (
-      <>
-        <Image source={UserProfile} style={styles.profileImage} />
-        </>
-    ) : (
-      <>
-        <Image source={medicef_logo} style={styles.adminLogo} />
-        {/* <Text style={styles.userName}>Welcome, User</Text> */}
-      </>
-    )}
-  </View>
+          <View style={styles.drawerHeader}>
+            {role === 'admin' ? (
+              <>
+                <Image source={UserProfile} style={styles.profileImage} />
+              </>
+            ) : (
+              <>
+                <Image source={medicef_logo} style={styles.adminLogo} />
+                {/* <Text style={styles.userName}>Welcome, User</Text> */}
+              </>
+            )}
+          </View>
 
-          {/* Custom Drawer Items */}
           {menuItems.map((item, index) => (
-           <TouchableOpacity
-           key={index}
-           style={[
-             styles.drawerItem,
-             activeItem === item.screen && styles.activeDrawerItem,
-           ]}
-           onPress={() => {
-             setActiveItem(item.screen);
-             props.navigation.navigate(item.screen); // Navigate using the drawer's navigation
-           }}
-         >
-           <Icon name={item.icon} size={22} color={activeItem === item.screen ? '#fff' : '#333'} />
-           <Text
-             style={[
-               styles.drawerItemLabel,
-               activeItem === item.screen && styles.activeDrawerItemLabel,
-             ]}
-           >
-             {item.label}
-           </Text>
-         </TouchableOpacity>
-         
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.drawerItem,
+                activeItem === item.screen && styles.activeDrawerItem,
+              ]}
+              onPress={() => navigateToScreen()}
+            >
+              <Icon name={item.icon} size={22} color={activeItem === item.screen ? '#fff' : '#333'} />
+              <Text
+                style={[
+                  styles.drawerItemLabel,
+                  activeItem === item.screen && styles.activeDrawerItemLabel,
+                ]}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+
           ))}
         </DrawerContentScrollView>
 
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   activeDrawerItem: {
-   // backgroundColor: '#1E90FF',
+    // backgroundColor: '#1E90FF',
     backgroundColor: '#1E90FF',
   },
   activeDrawerItemLabel: {

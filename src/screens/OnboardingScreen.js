@@ -6,8 +6,11 @@ import * as Animatable from 'react-native-animatable';
 import vidhyagxp_logo from '../assets/vidhyagxp_logo.png';
 
 export default function OnboardingScreen({ navigation }) {
-    const [showOnboarding, setShowOnboarding] = useState(false); 
+    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0);
+
     const onboardingRef = useRef(null);
+    let autoScrollTimer = useRef(null);
 
     const colors = ['#ba6715', '#f8b195'];
 
@@ -17,7 +20,7 @@ export default function OnboardingScreen({ navigation }) {
             style={styles.buttonContainer}
             onPress={() => Linking.openURL('https://medicef.mydemosoftware.com/')}
         >
-            <LinearGradient colors={colors} style={styles.gradientButton}>
+            <LinearGradient colors={colors} style={styles.gradientButtons}>
                 <Text style={styles.buttonText}>Done</Text>
             </LinearGradient>
         </TouchableOpacity>
@@ -27,9 +30,10 @@ export default function OnboardingScreen({ navigation }) {
     const Skip = () => (
         <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => Linking.openURL('https://medicef.mydemosoftware.com/')}
+            onPress={() => navigation.navigate('EmployeeForm')}
+            // onPress={() => Linking.openURL('https://medicef.mydemosoftware.com/')}
         >
-            <LinearGradient colors={colors} style={styles.gradientButton}>
+            <LinearGradient colors={colors} style={styles.gradientButtons}>
                 <Text style={styles.buttonText}>Skip</Text>
             </LinearGradient>
         </TouchableOpacity>
@@ -39,29 +43,43 @@ export default function OnboardingScreen({ navigation }) {
     const Next = () => (
         <TouchableOpacity
             style={styles.buttonContainer}
-            onPress={() => onboardingRef.current?.goToPage(1)} // Automatically move to the next page
-        >
-            <LinearGradient colors={colors} style={styles.gradientButton}>
+            onPress={() => {
+                clearInterval(autoScrollTimer.current); // Stop auto-scroll on manual navigation
+                const nextPage = currentPage + 1;
+                onboardingRef.current?.goToPage(nextPage);
+                setCurrentPage(nextPage);
+            }}        >
+            <LinearGradient colors={colors} style={styles.gradientButtons}>
                 <Text style={styles.buttonText}>Next</Text>
             </LinearGradient>
         </TouchableOpacity>
     );
 
     // Effect for auto-scrolling the onboarding screens
-    useEffect(() => {
-        let currentPage = 0;
-        const timer = setInterval(() => {
-            if (currentPage < 2) {
-                onboardingRef.current?.goToPage(currentPage + 1);
-                currentPage += 1;
-            } else {
-                clearInterval(timer);
-            }
+    const startAutoScroll = () => {
+        autoScrollTimer.current = setInterval(() => {
+            setCurrentPage((prevPage) => {
+                const nextPage = prevPage + 1;
+                if (nextPage < 3) {
+                    onboardingRef.current?.goToPage(nextPage);
+                    return nextPage;
+                } else {
+                    clearInterval(autoScrollTimer.current);
+                    return prevPage;
+                }
+            });
         }, 3000);
-        return () => clearInterval(timer);
-    }, []);
+    };
 
-    // Function to show the onboarding screen after "Get Started" button is pressed
+    // Start auto-scroll when onboarding starts
+    useEffect(() => {
+        if (showOnboarding) startAutoScroll();
+
+        return () => {
+            clearInterval(autoScrollTimer.current); // Cleanup timer
+        };
+    }, [showOnboarding]);
+
     const handleGetStarted = () => {
         setShowOnboarding(true);
     };
@@ -70,26 +88,25 @@ export default function OnboardingScreen({ navigation }) {
         <View style={styles.container}>
             {!showOnboarding ? (
                 <ImageBackground
-                    source={require('../assets/loginBG.jpeg')}
-                    style={styles.imageBackground} 
-                   // resizeMode="cover" 
+                    source={require('../assets/BG.jpg')}
+                    style={styles.imageBackground}
                 >
-
-                    <View style={styles.welcomeContainer}>
                     <Animatable.Image
-                            animation="zoomInUp"
-                            duration={2000}
-                            source={vidhyagxp_logo}
-                            style={styles.logo2}
-                            resizeMode="contain"
-                        />
-                    <Text style={styles.welcomeTitle}>Welcome to VidhyaGxp</Text>
-                    <Text style={styles.welcomeSubtitle1}>Data informs, wisdom discerns</Text>
+                        animation="zoomInUp"
+                        duration={2000}
+                        source={vidhyagxp_logo}
+                        style={styles.logo2}
+                        resizeMode="contain"
+                    />
+                      <Text style={styles.welcomeTitle}>Welcome to VidyaGxP</Text>
+                      <Text style={styles.welcomeSubtitle1}>Data informs, wisdom discerns</Text>
 
-                    <Text style={styles.welcomeSubtitle}>
+                       <View style={styles.welcomeContainer}>
+                   
+                        <Text style={styles.welcomeSubtitle}>
                             Empowering your journey through cutting-edge IT education and expertise.
                         </Text>
-                        
+
                         <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
                             <LinearGradient colors={colors} style={styles.gradientButton}>
                                 <Text style={styles.buttonText}>Get Started</Text>
@@ -121,7 +138,7 @@ export default function OnboardingScreen({ navigation }) {
                         {
                             backgroundColor: '#fff',
                             image: <Image source={require('../assets/onboard2.jpg')} />,
-                            title: 'Welcome to VidhyaGxp IT Group',
+                            title: 'Welcome to VidyaGxP Digital Transformation',
                             subtitle: 'Empowering your journey through cutting-edge IT education and expertise.',
                         },
                         {
@@ -132,8 +149,8 @@ export default function OnboardingScreen({ navigation }) {
                         },
                         {
                             backgroundColor: '#ffffff',
-                            image: <Image source={require('../assets/onboards.png')} style={{width:300,height:300}}  />,
-                            title: 'Dive into a seamless learning experience with VidhyaGxp IT Group',
+                            image: <Image source={require('../assets/onboards.png')} style={{ width: 300, height: 300 }} />,
+                            title: 'Dive into a seamless learning experience with VidyaGxP Digital Transformation',
                             subtitle: "Experience interactive learning with expert-led courses and progress tracking",
                         },
                     ]}
@@ -150,46 +167,55 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    logo2: { width: 200, height: 150, marginHorizontal: 5, marginVertical: 1 },
+    logo2: { width: 250, height: 150, marginTop: 75 },
 
     welcomeContainer: {
-      //  flex: 1,
-        justifyContent: 'center',
+        flex: 1,
+        justifyContent: 'flex-end',
         alignItems: 'center',
         padding: 20,
     },
     welcomeTitle: {
         fontSize: 30,
-        color:'#ba6715',
+        color: '#ba6715',
         fontWeight: 'bold',
         textAlign: 'center',
     },
     welcomeSubtitle1: {
         fontSize: 16,
-        color:'#000000',
+        color: '#000000',
         textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 1,
     },
+
     welcomeSubtitle: {
         fontSize: 16,
-        color:'#ba6715',
+        color: '#ba6715',
         textAlign: 'center',
-        marginBottom: 10,
+        marginBottom: 1,
     },
     getStartedButton: {
         borderRadius: 10,
         overflow: 'hidden',
-        marginHorizontal: 5,
+        margin: 5,
+    },
+    gradientButtons: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     buttonContainer: {
         borderRadius: 10,
-        overflow: 'hidden', 
+        overflow: 'hidden',
         marginHorizontal: 5,
     },
     gradientButton: {
-        paddingHorizontal: 30,
+        paddingHorizontal: 70,
         paddingVertical: 12,
         borderRadius: 10,
+        marginTop: 55,
         justifyContent: 'center',
         alignItems: 'center',
     },

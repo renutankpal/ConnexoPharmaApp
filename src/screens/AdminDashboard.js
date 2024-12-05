@@ -10,6 +10,7 @@ import {
   Easing, TextInput, FlatList, Image, Dimensions
 } from 'react-native';
 import CommonHeader from '../components/CommonHeader';
+//import { StackedBarChart } from 'react-native-gifted-charts';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,6 +21,29 @@ import { DataTable } from 'react-native-paper';
 
 const { width } = Dimensions.get('window');
 const slideAnim = new Animated.Value(300);
+const data = [
+  {
+    stacks: [
+      { value: 40, color: '#4caf50', label: 'Android' },
+      { value: 30, color: '#2196f3', label: 'iOS' },
+    ],
+    label: 'Jan',
+  },
+  {
+    stacks: [
+      { value: 60, color: '#4caf50', label: 'Android' },
+      { value: 20, color: '#2196f3', label: 'iOS' },
+    ],
+    label: 'Feb',
+  },
+  {
+    stacks: [
+      { value: 50, color: '#4caf50', label: 'Android' },
+      { value: 40, color: '#2196f3', label: 'iOS' },
+    ],
+    label: 'Mar',
+  },
+];
 
 const DashBoardtabs = [
   {
@@ -58,7 +82,8 @@ const courses = [
   { id: '10', name: 'Course 7', image: require('../assets/Rectangle32.png') },
 ];
 
-export default function AdminDashboard({ navigation }) {
+const AdminDashboard = ({navigation}) => {
+
   const [searchText, setSearchText] = useState('');
   const [selectedTab, setSelectedTab] = useState(1);
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -68,6 +93,39 @@ export default function AdminDashboard({ navigation }) {
   const [page, setPage] = useState(0);
 
   const rowsPerPage = 5;
+  const data = {
+    dataSets: [
+      {
+        values: [
+          { y: [40, 20, 10] },
+          { y: [30, 50, 15] },
+          { y: [20, 40, 25] },
+          { y: [10, 30, 35] },
+        ],
+        label: 'Stacked Bar Dataset',
+        config: {
+          colors: ['#FF6384', '#36A2EB', '#FFCE56'],
+          stackLabels: ['A', 'B', 'C'],
+        },
+      },
+    ],
+  };
+
+  const xAxis = {
+    valueFormatter: ['Q1', 'Q2', 'Q3', 'Q4'],
+    granularityEnabled: true,
+    granularity: 1,
+  };
+
+  const yAxis = {
+    left: {
+      axisMinimum: 0,
+    },
+    right: {
+      enabled: false,
+    },
+  };
+
 
   const filteredCourses = courses.filter(course =>
     course.name.toLowerCase().includes(searchText.toLowerCase())
@@ -282,6 +340,33 @@ export default function AdminDashboard({ navigation }) {
           onChangeText={setSearchText}
         />
       </View>
+      <View>
+      <StackedBarChart
+        style={styles.chart}
+        data={data}
+        xAxis={xAxis}
+        yAxis={yAxis}
+        legend={{
+          enabled: true,
+        }}
+        chartDescription={{
+          text: 'Quarterly Sales',
+        }}
+        marker={{
+          enabled: true,
+        }}
+        drawValueAboveBar={true}
+      />
+      </View>
+      {/* <StackedBarChart
+        data={data}
+        barWidth={30}
+        barBorderRadius={4}
+        barMarginBottom={8}
+        noOfSections={4} // Defines the number of gridlines
+        height={300}
+        isAnimated
+      /> */}
       {/* <View>
         <FlatList
           horizontal
@@ -316,7 +401,7 @@ export default function AdminDashboard({ navigation }) {
       </View> */}
 
 
-      {renderForm()}
+      {/* {renderForm()} */}
       <View style={{ flexDirection: 'row', margin: 15, justifyContent: 'space-between' }}>
         <Text style={styles.courseName}>Login Accounts</Text>
       </View>
@@ -442,6 +527,7 @@ export default function AdminDashboard({ navigation }) {
     </KeyboardAvoidingView>
   );
 }
+export default AdminDashboard;
 
 const styles = StyleSheet.create({
   container: {

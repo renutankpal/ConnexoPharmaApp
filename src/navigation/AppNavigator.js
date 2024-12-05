@@ -22,20 +22,25 @@ const Stack = createStackNavigator();
 
 // Drawer navigator with additional screens
 function DrawerNavigator({ route, navigation }) {
-  const role = route?.params?.role;
+  const role = route?.params?.role || 'employee';
 
   return (
     <View style={{ flex: 1 }}>
       <Drawer.Navigator
-        drawerContent={(props) => <DrawerContent {...props} role={role} />}
-        initialRouteName={role === 'admin' ? 'AdminDashboard' : 'DashboardScreen'}
+        drawerContent={(props) => <DrawerContent {...props}
+       //  role={role}
+          />}
+       // initialRouteName={role === 'admin' ? 'AdminDashboard' : 'DashboardScreen'}
         screenOptions={{ headerShown: false }}
       >
-        {role === 'admin' ? (
+        {/* {role === 'admin' ? (
           <Drawer.Screen name="AdminDashboard" component={AdminDashboard} />
         ) : (
           <Drawer.Screen name="Dashboard" component={DashboardScreen} />
-        )}
+        )} */}
+        <Drawer.Screen name="AdminDashboard" component={AdminDashboard} />
+        <Drawer.Screen name="Dashboard" component={DashboardScreen} />
+
         <Drawer.Screen name="ProfileScreen" component={ProfileScreen} />
         <Drawer.Screen name="Notifications" component={Notifications} />
         <Drawer.Screen name="EmployeeForm" component={EmployeeForm} />
@@ -66,7 +71,7 @@ export default function AppNavigator({route}) {
         <Stack.Screen name="Notifications" component={Notifications} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
-        <Stack.Screen name="AdminDashboard" component={DrawerNavigator} />
+        <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="EmployeeForm" component={EmployeeForm} />
 

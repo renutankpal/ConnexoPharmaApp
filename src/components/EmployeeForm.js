@@ -4,6 +4,8 @@ import CustomButton from '../components/CustomButton';
 import CommonHeader from '../components/CommonHeader';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Voice from '@react-native-voice/voice';
+import Tts from 'react-native-tts';
 
 const EmployeeForm = ({ navigation }) => {
   const [locationOpen, setLocationOpen] = useState(false);
@@ -40,9 +42,62 @@ const EmployeeForm = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    console.log('Form Submitted', { location, gender, dob });
-    navigation.goBack();
+    console.log('Form Submitted', { location, gender, dob,description });
+    navigation.navigate('Settings');
+   // navigation.goBack();
   };
+
+  const [description, setDescription] = useState('');
+  const [listening, setListening] = useState(false);
+
+  // Initialize Voice handlers
+  React.useEffect(() => {
+    Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = onSpeechError;
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  const startListening = async () => {
+    try {
+      setListening(true);
+      await Voice.start('en-US');
+    } catch (error) {
+      console.error('Error starting voice recognition:', error);
+      setListening(false);
+    }
+  };
+
+  const stopListening = async () => {
+    try {
+      await Voice.stop();
+      setListening(false);
+    } catch (error) {
+      console.error('Error stopping voice recognition:', error);
+    }
+  };
+
+  const onSpeechResults = (event) => {
+    const recognizedText = event.value?.[0] || '';
+    setDescription((prev) => (prev ? `${prev} ${recognizedText}` : recognizedText));
+    setListening(false);
+  };
+
+  const onSpeechError = (error) => {
+    console.error('Speech recognition error:', error);
+    setListening(false);
+  };
+
+  const readTextAloud = () => {
+    if (description) {
+      Tts.speak(description);
+    } else {
+      Tts.speak('The description box is empty.');
+    }
+  };
+
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -112,6 +167,31 @@ const EmployeeForm = ({ navigation }) => {
             maximumDate={new Date()}
           />
         )}
+        {/* <TextInput style={styles.formInput} numberOfLines={3} placeholder="Short Discription:" /> */}
+ {/* Description Section */}
+ <View style={styles.descriptionContainer}>
+  <View style={styles.inputWithIcons}>
+    <TextInput
+      style={styles.formInputWithIcons}
+      placeholder="Short Description:"
+      value={description}
+      onChangeText={setDescription}
+      multiline={true}
+      numberOfLines={3}
+    />
+    <View style={styles.iconContainer}>
+      <TouchableOpacity
+        onPress={listening ? stopListening : startListening}
+        style={styles.speakerIcon}
+      >
+        <Text style={styles.iconText}>{listening ? '🛑 Stop' : '🎙️ Speak'}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={readTextAloud} style={styles.speakerIcon}>
+        <Text style={styles.iconText}>🔊 Listen</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</View>
 
         <CustomButton title="Submit" onPress={handleSubmit} />
       </ScrollView>
@@ -138,7 +218,38 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
-  dropdown: {
+  descriptionContainer: {
+    marginBottom: 20,
+  },
+  inputWithIcons: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  formInputWithIcons: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    padding: 10,
+    marginRight: 10, 
+    textAlignVertical: 'top', 
+  },
+  iconContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  speakerIcon: {
+    padding: 10,
+    backgroundColor: '#eaeaea',
+    borderRadius: 5,
+    marginBottom: 10, // Space between icons
+  },
+  iconText: {
+    fontSize: 16,
+    color: '#555',
+  },
+      dropdown: {
     borderColor: '#ccc',
     backgroundColor: '#fff',
     marginBottom: 20,

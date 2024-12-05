@@ -9,6 +9,8 @@ import loginBG from '../assets/loginBG.jpeg';
 import { Checkbox } from 'react-native-paper';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Tts from 'react-native-tts';
+import Voice from '@react-native-voice/voice';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -19,13 +21,41 @@ export default function LoginScreen() {
     const [borderColor, setBorderColor] = useState('#ccc');
 
     const [roleBorderColor, setRoleBorderColor] = useState('');
-    const [open, setOpen] = useState(false); 
-    const [value, setValue] = useState(null); 
-    const [items, setItems] = useState([ 
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
         { label: 'Admin', value: 'admin' },
         { label: 'User', value: 'user' },
         { label: 'Employee', value: 'employee' },
     ]);
+    const [text, setText] = useState('');
+    const [isListening, setIsListening] = useState(false);
+
+    const startListening = async () => {
+        try {
+            setIsListening(true);
+            Voice.onSpeechResults = (event) => {
+                if (event.value) {
+                    const transcribedText = event.value[0];
+                    setText(transcribedText);
+                    Tts.speak(transcribedText); // Speak the transcribed text
+                }
+            };
+            await Voice.start('en-US');
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const stopListening = async () => {
+        try {
+            await Voice.stop();
+            setIsListening(false);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
 
     const navigation = useNavigation();
     const handleFocus = () => setBorderColor('#1E90FF');
@@ -63,6 +93,11 @@ export default function LoginScreen() {
                         />
                     </View>
                     <Text style={styles.welcomeTxt}>Welcome To Admin-Console</Text>
+                    <Text style={styles.text}>Transcribed Text: {text}</Text>
+                    <CustomButton
+                        title={isListening ? "Stop Listening" : "Start Listening"} 
+                        onPress={isListening ? stopListening : startListening} />
+
                     <View style={[styles.inputContainer, { emailBorderColor }]}>
                         <TextInput
                             style={styles.input}
@@ -121,7 +156,7 @@ export default function LoginScreen() {
                         }}
                         style={{ width: '100%', marginVertical: 20 }}
                     />
-                      </View>
+                </View>
             </View>
         </ImageBackground>
     );

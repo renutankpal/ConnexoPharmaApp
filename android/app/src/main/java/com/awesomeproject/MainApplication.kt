@@ -1,4 +1,5 @@
 package com.awesomeproject
+import com.awesomeproject.VpnDetectorPackage;
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -16,7 +17,8 @@ class MainApplication : Application(), ReactApplication {
         object : DefaultReactNativeHost(this) {
             override fun getPackages(): List<ReactPackage> =
                 PackageList(this).packages.apply {
-                    // Add manually linked packages here if needed.
+                  add(VpnDetectorPackage()) // Register the VpnDetector package
+                  // Add manually linked packages here if needed.
                 }
 
             override fun getJSMainModuleName(): String = "index"
